@@ -1,4 +1,7 @@
+//https://stackoverflow.com/questions/40885923/countdown-timer-in-react
+
 import * as React from "react"
+import bell from "../sounds/bell-hard.m4a" // Tell webpack this JS file uses this image
 
 // styles
 const pageStyles = {
@@ -125,60 +128,131 @@ const links = [
   },
 ]
 
-// markup
-const IndexPage = () => {
-  return (
-    <main style={pageStyles}>
-      <title>Home Page</title>
-      <h1 style={headingStyles}>
-        Congratulations
-        <br />
-        <span style={headingAccentStyles}>— you just made a Gatsby site! </span>
-        <span role="img" aria-label="Party popper emojis">
-          🎉🎉🎉
-        </span>
-      </h1>
-      <p style={paragraphStyles}>
-        Edit <code style={codeStyles}>src/pages/index.js</code> to see this page
-        update in real-time.{" "}
-        <span role="img" aria-label="Sunglasses smiley emoji">
-          😎
-        </span>
-      </p>
-      <ul style={listStyles}>
-        <li style={docLinkStyle}>
-          <a
-            style={linkStyle}
-            href={`${docLink.url}?utm_source=starter&utm_medium=start-page&utm_campaign=minimal-starter`}
-          >
-            {docLink.text}
-          </a>
-        </li>
-        {links.map(link => (
-          <li key={link.url} style={{ ...listItemStyles, color: link.color }}>
-            <span>
-              <a
-                style={linkStyle}
-                href={`${link.url}?utm_source=starter&utm_medium=start-page&utm_campaign=minimal-starter`}
-              >
-                {link.text}
-              </a>
-              {link.badge && (
-                <span style={badgeStyle} aria-label="New Badge">
-                  NEW!
-                </span>
-              )}
-              <p style={descriptionStyle}>{link.description}</p>
-            </span>
-          </li>
-        ))}
-      </ul>
-      <img
-        alt="Gatsby G Logo"
-        src="data:image/svg+xml,%3Csvg width='24' height='24' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M12 2a10 10 0 110 20 10 10 0 010-20zm0 2c-3.73 0-6.86 2.55-7.75 6L14 19.75c3.45-.89 6-4.02 6-7.75h-5.25v1.5h3.45a6.37 6.37 0 01-3.89 4.44L6.06 9.69C7 7.31 9.3 5.63 12 5.63c2.13 0 4 1.04 5.18 2.65l1.23-1.06A7.959 7.959 0 0012 4zm-8 8a8 8 0 008 8c.04 0 .09 0-8-8z' fill='%23639'/%3E%3C/svg%3E"
-      />
-    </main>
-  )
+
+const secondOptions = [
+  { value: 10 },
+  { value: 20 },
+  { value: 30 },
+  { value: 40 },
+  { value: 50 },
+  { value: 60 }
+]
+
+const minuteOptions = [
+  { value: 5 },
+  { value: 10 },
+  { value: 15 },
+  { value: 20 },
+  { value: 25 },
+  { value: 30 }
+]
+
+const playBell = () => {
+  const audio = new Audio(bell);
+  audio.play();
+}
+
+const playBells = () => {
+  const bellInterval = 2500;
+
+  setTimeout(playBell, 0);
+  setTimeout(playBell, bellInterval);
+  setTimeout(playBell, bellInterval * 2);
+}
+
+const secondsToTime = (secs) => {
+  const divisor_for_minutes = secs % (60 * 60);
+  const minutes = Math.floor(divisor_for_minutes / 60);
+
+  const divisor_for_seconds = divisor_for_minutes % 60;
+  const seconds = Math.ceil(divisor_for_seconds);
+
+  return {
+    minutes,
+    seconds
+  };
+}
+
+class IndexPage extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { time: { minutes: 0, seconds: 10 }, seconds: 10 };
+    this.timer = null;
+  }
+
+  componentDidMount() {
+    const timeLeft = secondsToTime(this.state.seconds);
+    this.setState({ time: timeLeft });
+  }
+
+  startTimer = () => {
+    if (!this.timer && this.state.seconds) {
+      this.timer = setInterval(this.countDown, 1000);
+      playBells();
+    }
+  }
+
+  countDown = () => {
+    // Remove one second, set state so a re-render happens.
+    let seconds = this.state.seconds - 1;
+    this.setState({
+      time: secondsToTime(seconds),
+      seconds: seconds
+    });
+
+    // Check if we're at zero.
+    if (!seconds) {
+      clearInterval(this.timer);
+      playBells();
+    }
+  }
+
+  onChangeMinutes = (e) => {
+    console.log(e.target.value);
+  }
+
+  onChangeSeconds = (e) => {
+    console.log(e.target.value);
+  }
+
+  render() {
+    return (
+      <main style={pageStyles}>
+        <title>Meditation Timer</title>
+        <div>
+          <p>{this.state.time.minutes}:{this.state.time.seconds}</p>
+
+          <div>
+            <label htmlFor="count-in">Count In</label>
+            {secondOptions && secondOptions.length && (
+              <div>
+                <select id={'count-in'} onChange={this.onChangeSeconds}>
+                  {secondOptions.map((option, index) => {
+                    return <option key={index}>{option.value}</option>;
+                  })}
+                </select>
+              </div>
+            )}
+          </div>
+
+          <div>
+            <label htmlFor="meditation-time">Meditation Time</label>
+            {minuteOptions && minuteOptions.length && (
+              <div>
+                <select id={'meditation-time'} onChange={this.onChangeMinutes}>
+                  {minuteOptions.map((option, index) => {
+                    return <option key={index}>{option.value}</option>;
+                  })}
+                </select>
+              </div>
+            )}
+          </div>
+
+          <button onClick={this.startTimer}>Meditate</button>
+        </div>
+      </main>
+    )
+  }
 }
 
 export default IndexPage
