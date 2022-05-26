@@ -6,7 +6,7 @@ import bell from '../sounds/bell-hard.m4a'; // Tell webpack this JS file uses th
 // styles
 const pageStyles = {
   color: '#232129',
-  fontFamily: '-apple-system, Roboto, sans-serif, serif',
+  fontFamily: 'ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji"',
 };
 const headingStyles = {
   marginTop: 0,
@@ -171,6 +171,10 @@ const secondsToTime = (secs) => {
   };
 };
 
+const timeToSeconds = (time) => {
+  return minutesToSeconds(time.minutes) + time.seconds;
+};
+
 const minutesToSeconds = (minutes) => {
   return minutes * 60;
 };
@@ -178,17 +182,19 @@ const minutesToSeconds = (minutes) => {
 class IndexPage extends React.Component {
   constructor (props) {
     super(props);
-    this.state = { meditationTime: { minutes: 0, seconds: 0 }, seconds: 900 };
+    this.state = { meditationTime: { minutes: 0, seconds: 10 }, waitTime: { minutes: 0, seconds: 10 } };
     this.timer = null;
   }
 
   componentDidMount () {
-    const timeLeft = secondsToTime(this.state.seconds);
+    const seconds = timeToSeconds(this.state.meditationTime);
+    const timeLeft = secondsToTime(seconds);
     this.setState({ meditationTime: timeLeft });
   }
 
   startTimer = () => {
-    if (!this.timer && this.state.seconds) {
+    const seconds = timeToSeconds(this.state.meditationTime);
+    if (!this.timer && seconds) {
       this.timer = setInterval(this.countDown, 1000);
       playBells();
     }
@@ -196,10 +202,9 @@ class IndexPage extends React.Component {
 
   countDown = () => {
     // Remove one second, set state so a re-render happens.
-    let seconds = this.state.seconds - 1;
+    const seconds = timeToSeconds(this.state.meditationTime) - 1;
     this.setState({
-      meditationTime: secondsToTime(seconds),
-      seconds
+      meditationTime: secondsToTime(seconds)
     });
 
     // Check if we're at zero.
@@ -218,7 +223,10 @@ class IndexPage extends React.Component {
   };
 
   onChangeSeconds = (e) => {
-    console.log(e.target.value);
+    const seconds = e.target.value;
+    const timeLeft = secondsToTime(seconds);
+
+    this.setState({ waitTime: timeLeft });
   };
 
   render () {
@@ -235,10 +243,11 @@ class IndexPage extends React.Component {
 
           <div>
             <div>
-              <label htmlFor="count-in">Count In</label>
+              <label htmlFor="count-in">Count In (seconds)</label>
               {secondOptions && secondOptions.length && (
                 <div>
-                  <select id={'count-in'} onChange={this.onChangeSeconds} disabled={this.timer}>
+                  <select id={'count-in'} onChange={this.onChangeSeconds} disabled={this.timer}
+                          value={this.state.waitTime.seconds}>
                     {secondOptions.map((option, index) => {
                       return <option key={index}>{option.value}</option>;
                     })}
@@ -248,7 +257,7 @@ class IndexPage extends React.Component {
             </div>
 
             <div>
-              <label htmlFor="meditation-time">Meditation Time</label>
+              <label htmlFor="meditation-time">Meditation Time (minutes)</label>
               {minuteOptions && minuteOptions.length && (
                 <div>
                   <select id={'meditation-time'} onChange={this.onChangeMeditateTime} disabled={this.timer}
@@ -261,7 +270,9 @@ class IndexPage extends React.Component {
               )}
             </div>
 
-            <button onClick={this.startTimer} disabled={this.timer}>Meditate</button>
+            <div>
+              <button onClick={this.startTimer} disabled={this.timer}>Meditate</button>
+            </div>
           </div>
 
         </div>
