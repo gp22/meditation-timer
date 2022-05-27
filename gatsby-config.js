@@ -3,5 +3,7 @@ module.exports = {
     title: `Meditation Timer`,
     siteUrl: `https://www.yourdomain.tld`,
   },
-  plugins: [],
-}
+  plugins: [
+    `gatsby-plugin-postcss`,
+  ],
+};

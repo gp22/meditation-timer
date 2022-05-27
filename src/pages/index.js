@@ -1,13 +1,8 @@
 //https://stackoverflow.com/questions/40885923/countdown-timer-in-react
 
 import * as React from 'react';
+import '../css/style.css';
 import bell from '../sounds/bell-hard.m4a'; // Tell webpack this JS file uses this image
-
-// styles
-const pageStyles = {
-  color: '#232129',
-  fontFamily: 'ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji"',
-};
 
 const secondOptions = [
   { value: 10 },
@@ -118,12 +113,12 @@ class IndexPage extends React.Component {
     const displaySeconds = seconds > 9 ? seconds : `0${seconds}`;
 
     return (
-      <main style={pageStyles}>
+      <main className="center">
         <title>Meditation Timer</title>
-        <div>
+        <div className="stack">
           <p>{displayMinutes}:{displaySeconds}</p>
 
-          <div>
+          <div className="cluster">
             <div>
               <label htmlFor="count-in">Count In (seconds)</label>
               {secondOptions && secondOptions.length && (
