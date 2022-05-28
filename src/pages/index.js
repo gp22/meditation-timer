@@ -60,7 +60,8 @@ class IndexPage extends React.Component {
   constructor (props) {
     super(props);
     this.state = { meditationTime: { minutes: 0, seconds: 10 }, waitTime: { minutes: 0, seconds: 10 } };
-    this.timer = null;
+    this.meditationTimer = null;
+    this.waitTimer = null;
   }
 
   componentDidMount () {
@@ -69,15 +70,21 @@ class IndexPage extends React.Component {
     this.setState({ meditationTime: timeLeft });
   }
 
-  startTimer = () => {
+  startMeditateTimer = () => {
     const seconds = timeToSeconds(this.state.meditationTime);
-    if (!this.timer && seconds) {
-      this.timer = setInterval(this.countDown, 1000);
-      playBells();
+    if (!this.meditationTimer && seconds) {
+      this.meditationTimer = setInterval(this.countDownMeditation, 1000);
     }
   };
 
-  countDown = () => {
+  startTimer = () => {
+    const seconds = timeToSeconds(this.state.waitTime);
+    if (!this.waitTimer && seconds) {
+      this.waitTimer = setInterval(this.countDownWait, 1000);
+    }
+  };
+
+  countDownMeditation = () => {
     // Remove one second, set state so a re-render happens.
     const seconds = timeToSeconds(this.state.meditationTime) - 1;
     this.setState({
@@ -86,8 +93,23 @@ class IndexPage extends React.Component {
 
     // Check if we're at zero.
     if (!seconds) {
-      clearInterval(this.timer);
+      clearInterval(this.meditationTimer);
       playBells();
+    }
+  };
+
+  countDownWait = () => {
+    // Remove one second, set state so a re-render happens.
+    const seconds = timeToSeconds(this.state.waitTime) - 1;
+    this.setState({
+      waitTime: secondsToTime(seconds)
+    });
+
+    // Check if we're at zero.
+    if (!seconds) {
+      clearInterval(this.waitTimer);
+      playBells();
+      this.startMeditateTimer();
     }
   };
 
@@ -107,10 +129,19 @@ class IndexPage extends React.Component {
   };
 
   render () {
-    const minutes = this.state.meditationTime.minutes;
-    const displayMinutes = minutes > 9 ? minutes : `0${minutes}`;
-    const seconds = this.state.meditationTime.seconds;
-    const displaySeconds = seconds > 9 ? seconds : `0${seconds}`;
+    let minutes, seconds, displayMinutes, displaySeconds;
+
+    if (this.waitTimer && !this.meditationTimer) {
+      minutes = this.state.waitTime.minutes;
+      displayMinutes = minutes > 9 ? minutes : `0${minutes}`;
+      seconds = this.state.waitTime.seconds;
+      displaySeconds = seconds > 9 ? seconds : `0${seconds}`;
+    } else {
+      minutes = this.state.meditationTime.minutes;
+      displayMinutes = minutes > 9 ? minutes : `0${minutes}`;
+      seconds = this.state.meditationTime.seconds;
+      displaySeconds = seconds > 9 ? seconds : `0${seconds}`;
+    }
 
     return (
       <main className="cover">
@@ -119,7 +150,8 @@ class IndexPage extends React.Component {
             <label htmlFor="count-in">Count In</label>
             {secondOptions && secondOptions.length && (
               <div>
-                <select id={'count-in'} onChange={this.onChangeSeconds} disabled={this.timer}
+                <select id={'count-in'} onChange={this.onChangeSeconds}
+                        disabled={this.waitTimer || this.meditationTimer}
                         value={this.state.waitTime.seconds}>
                   {secondOptions.map((option, index) => {
                     return <option key={index} value={option.value}>{option.value} (seconds)</option>;
@@ -133,7 +165,8 @@ class IndexPage extends React.Component {
             <label htmlFor="meditation-time">Meditation Time</label>
             {minuteOptions && minuteOptions.length && (
               <div>
-                <select id={'meditation-time'} onChange={this.onChangeMeditateTime} disabled={this.timer}
+                <select id={'meditation-time'} onChange={this.onChangeMeditateTime}
+                        disabled={this.waitTimer || this.meditationTimer}
                         value={this.state.meditationTime.minutes}>
                   {minuteOptions.map((option, index) => {
                     return <option key={index} value={option.value}>{option.value} (minutes)</option>;
@@ -144,7 +177,7 @@ class IndexPage extends React.Component {
           </div>
 
           <div>
-            <button onClick={this.startTimer} disabled={this.timer}>Meditate</button>
+            <button onClick={this.startTimer} disabled={this.waitTimer || this.meditationTimer}>Meditate</button>
           </div>
         </div>
 
