@@ -28,7 +28,7 @@ const playBell = () => {
 };
 
 const playBells = () => {
-  const bellInterval = 2500;
+  const bellInterval = 3000;
 
   setTimeout(playBell, 0);
   setTimeout(playBell, bellInterval);
@@ -59,7 +59,7 @@ const minutesToSeconds = (minutes) => {
 class IndexPage extends React.Component {
   constructor (props) {
     super(props);
-    this.state = { meditationTime: { minutes: 0, seconds: 10 }, waitTime: { minutes: 0, seconds: 10 } };
+    this.state = { meditationTime: { minutes: 15, seconds: 0 }, waitTime: { minutes: 0, seconds: 60 } };
     this.meditationTimer = null;
     this.waitTimer = null;
   }
@@ -85,13 +85,11 @@ class IndexPage extends React.Component {
   };
 
   countDownMeditation = () => {
-    // Remove one second, set state so a re-render happens.
     const seconds = timeToSeconds(this.state.meditationTime) - 1;
     this.setState({
       meditationTime: secondsToTime(seconds)
     });
 
-    // Check if we're at zero.
     if (!seconds) {
       clearInterval(this.meditationTimer);
       playBells();
@@ -99,13 +97,11 @@ class IndexPage extends React.Component {
   };
 
   countDownWait = () => {
-    // Remove one second, set state so a re-render happens.
     const seconds = timeToSeconds(this.state.waitTime) - 1;
     this.setState({
       waitTime: secondsToTime(seconds)
     });
 
-    // Check if we're at zero.
     if (!seconds) {
       clearInterval(this.waitTimer);
       playBells();
