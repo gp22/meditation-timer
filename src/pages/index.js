@@ -1,6 +1,7 @@
 //https://stackoverflow.com/questions/40885923/countdown-timer-in-react
 
 import * as React from 'react';
+import { Helmet } from 'react-helmet';
 import '../css/style.css';
 import bell from '../sounds/bell-hard.m4a'; // Tell webpack this JS file uses this image
 
@@ -140,47 +141,53 @@ class IndexPage extends React.Component {
     }
 
     return (
-      <main className="cover">
-        <div className="cluster">
-          <div>
-            <label htmlFor="count-in">Count In</label>
-            {secondOptions && secondOptions.length && (
-              <div>
-                <select id={'count-in'} onChange={this.onChangeSeconds}
-                        disabled={this.waitTimer || this.meditationTimer}
-                        value={this.state.waitTime.seconds}>
-                  {secondOptions.map((option, index) => {
-                    return <option key={index} value={option.value}>{option.value} (seconds)</option>;
-                  })}
-                </select>
-              </div>
-            )}
+      <>
+        <Helmet>
+          <link rel="preload" href={bell} as="audio" type="audio/m4a"/>
+        </Helmet>
+
+        <main className="cover">
+          <div className="cluster">
+            <div>
+              <label htmlFor="count-in">Count In</label>
+              {secondOptions && secondOptions.length && (
+                <div>
+                  <select id={'count-in'} onChange={this.onChangeSeconds}
+                          disabled={this.waitTimer || this.meditationTimer}
+                          value={this.state.waitTime.seconds}>
+                    {secondOptions.map((option, index) => {
+                      return <option key={index} value={option.value}>{option.value} (seconds)</option>;
+                    })}
+                  </select>
+                </div>
+              )}
+            </div>
+
+            <div>
+              <label htmlFor="meditation-time">Meditation Time</label>
+              {minuteOptions && minuteOptions.length && (
+                <div>
+                  <select id={'meditation-time'} onChange={this.onChangeMeditateTime}
+                          disabled={this.waitTimer || this.meditationTimer}
+                          value={this.state.meditationTime.minutes}>
+                    {minuteOptions.map((option, index) => {
+                      return <option key={index} value={option.value}>{option.value} (minutes)</option>;
+                    })}
+                  </select>
+                </div>
+              )}
+            </div>
+
+            <div>
+              <button onClick={this.startTimer} disabled={this.waitTimer || this.meditationTimer}>Meditate</button>
+            </div>
           </div>
 
-          <div>
-            <label htmlFor="meditation-time">Meditation Time</label>
-            {minuteOptions && minuteOptions.length && (
-              <div>
-                <select id={'meditation-time'} onChange={this.onChangeMeditateTime}
-                        disabled={this.waitTimer || this.meditationTimer}
-                        value={this.state.meditationTime.minutes}>
-                  {minuteOptions.map((option, index) => {
-                    return <option key={index} value={option.value}>{option.value} (minutes)</option>;
-                  })}
-                </select>
-              </div>
-            )}
+          <div className="centered center and-text">
+            <p className="timer">{displayMinutes}:{displaySeconds}</p>
           </div>
-
-          <div>
-            <button onClick={this.startTimer} disabled={this.waitTimer || this.meditationTimer}>Meditate</button>
-          </div>
-        </div>
-
-        <div className="centered center and-text">
-          <p className="timer">{displayMinutes}:{displaySeconds}</p>
-        </div>
-      </main>
+        </main>
+      </>
     );
   }
 }
