@@ -113,45 +113,43 @@ class IndexPage extends React.Component {
     const displaySeconds = seconds > 9 ? seconds : `0${seconds}`;
 
     return (
-      <main className="center">
-        <title>Meditation Timer</title>
-        <div className="stack">
-          <p>{displayMinutes}:{displaySeconds}</p>
-
-          <div className="cluster">
-            <div>
-              <label htmlFor="count-in">Count In (seconds)</label>
-              {secondOptions && secondOptions.length && (
-                <div>
-                  <select id={'count-in'} onChange={this.onChangeSeconds} disabled={this.timer}
-                          value={this.state.waitTime.seconds}>
-                    {secondOptions.map((option, index) => {
-                      return <option key={index}>{option.value}</option>;
-                    })}
-                  </select>
-                </div>
-              )}
-            </div>
-
-            <div>
-              <label htmlFor="meditation-time">Meditation Time (minutes)</label>
-              {minuteOptions && minuteOptions.length && (
-                <div>
-                  <select id={'meditation-time'} onChange={this.onChangeMeditateTime} disabled={this.timer}
-                          value={this.state.meditationTime.minutes}>
-                    {minuteOptions.map((option, index) => {
-                      return <option key={index}>{option.value}</option>;
-                    })}
-                  </select>
-                </div>
-              )}
-            </div>
-
-            <div>
-              <button onClick={this.startTimer} disabled={this.timer}>Meditate</button>
-            </div>
+      <main className="cover">
+        <div className="cluster">
+          <div>
+            <label htmlFor="count-in">Count In</label>
+            {secondOptions && secondOptions.length && (
+              <div>
+                <select id={'count-in'} onChange={this.onChangeSeconds} disabled={this.timer}
+                        value={this.state.waitTime.seconds}>
+                  {secondOptions.map((option, index) => {
+                    return <option key={index} value={option.value}>{option.value} (seconds)</option>;
+                  })}
+                </select>
+              </div>
+            )}
           </div>
 
+          <div>
+            <label htmlFor="meditation-time">Meditation Time</label>
+            {minuteOptions && minuteOptions.length && (
+              <div>
+                <select id={'meditation-time'} onChange={this.onChangeMeditateTime} disabled={this.timer}
+                        value={this.state.meditationTime.minutes}>
+                  {minuteOptions.map((option, index) => {
+                    return <option key={index} value={option.value}>{option.value} (minutes)</option>;
+                  })}
+                </select>
+              </div>
+            )}
+          </div>
+
+          <div>
+            <button onClick={this.startTimer} disabled={this.timer}>Meditate</button>
+          </div>
+        </div>
+
+        <div className="centered center and-text">
+          <p className="timer">{displayMinutes}:{displaySeconds}</p>
         </div>
       </main>
     );

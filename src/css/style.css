@@ -1,12 +1,12 @@
 :root {
   --measure: 60ch;
-  --space-1: 1rem;
+  --space-1: 1.5rem;
 }
 
 * {
-  margin: 0;
+  @apply box-border m-0 p-0;
+
   max-inline-size: var(--measure);
-  padding: 0;
 }
 
 html,
@@ -19,28 +19,55 @@ footer {
   max-inline-size: none;
 }
 
+button, select {
+  @apply p-2;
+}
+
 .center {
-  box-sizing: content-box;
+  @apply box-content;
+
   max-inline-size: var(--measure);
   margin-inline: auto;
   padding-inline-start: var(--space-1);
   padding-inline-end: var(--space-1);
 }
 
+.center.intrinsic {
+  @apply flex flex-col items-center;
+}
+
+.center.and-text {
+  @apply text-center;
+}
+
 .cluster {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space, 1rem);
-  /* ↓ Choose your justification (flex-start is default) */
-  justify-content: center;
-  /* ↓ Choose your alignment (flex-start is default) */
-  align-items: center;
+  @apply flex flex-wrap gap-6 justify-center items-end;
+}
+
+.cover {
+  @apply flex flex-col p-10;
+
+  min-block-size: 100vh;
+}
+
+.cover > * {
+  margin-block: var(--space-1);
+}
+
+.cover > :first-child:not(.centered) {
+  margin-block-start: 0;
+}
+
+.cover > :last-child:not(.centered) {
+  margin-block-end: 0;
+}
+
+.cover > .centered {
+  margin-block: auto;
 }
 
 .stack {
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
+  @apply flex flex-col justify-start;
 }
 
 .stack > * {
@@ -48,9 +75,13 @@ footer {
 }
 
 .stack > * + * {
-  margin-block-start: var(--space, 1.5rem);
+  margin-block-start: var(--space-1);
+}
+
+.timer {
+  @apply text-3xl;
 }
 
 body {
-  @apply font-body min-h-screen;
+  @apply bg-black font-body min-h-screen text-white;
 }
