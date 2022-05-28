@@ -146,6 +146,8 @@ class IndexPage extends React.Component {
           <link rel="preload" href={bell} as="audio" type="audio/m4a"/>
         </Helmet>
 
+        <audio preload="auto" src={bell} />
+
         <main className="cover">
           <div className="cluster">
             <div>
