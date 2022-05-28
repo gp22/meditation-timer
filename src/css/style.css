@@ -1,3 +1,7 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 :root {
   --measure: 60ch;
   --space-1: 1.5rem;
@@ -7,6 +11,10 @@
   @apply box-border m-0 p-0;
 
   max-inline-size: var(--measure);
+}
+
+body {
+  @apply bg-black font-body min-h-screen text-white;
 }
 
 html,
@@ -21,6 +29,18 @@ footer {
 
 button, select {
   @apply p-2;
+}
+
+button {
+  @apply border border-4 border-white;
+}
+
+button:disabled {
+  @apply opacity-50;
+}
+
+select {
+  @apply text-black;
 }
 
 .center {
@@ -80,8 +100,4 @@ button, select {
 
 .timer {
   @apply text-3xl;
-}
-
-body {
-  @apply bg-black font-body min-h-screen text-white;
 }
