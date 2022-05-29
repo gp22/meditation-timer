@@ -5,38 +5,27 @@ import useTimer from 'easytimer-react-hook';
 import '../css/style.css';
 import bell from '../sounds/bell-hard.m4a'; // Tell webpack this JS file uses this image
 
-const secondOptions = [
-  { value: 10 },
-  { value: 20 },
-  { value: 30 },
-  { value: 40 },
-  { value: 50 },
-  { value: 60 }
-];
-
-const minuteOptions = [
-  { value: 5 },
-  { value: 10 },
-  { value: 15 },
-  { value: 20 },
-  { value: 25 },
-  { value: 30 }
-];
-
-const playBell = () => {
-  const audio = new Audio(bell);
-  audio.play();
-};
-
-const playBells = () => {
-  const bellInterval = 3000;
-
-  setTimeout(playBell, 0);
-  setTimeout(playBell, bellInterval);
-  setTimeout(playBell, bellInterval * 2);
-};
-
 const IndexPage = () => {
+  const secondOptions = [
+    { value: 10 },
+    { value: 20 },
+    { value: 30 },
+    { value: 40 },
+    { value: 50 },
+    { value: 60 }
+  ];
+
+  const minuteOptions = [
+    { value: 5 },
+    { value: 10 },
+    { value: 15 },
+    { value: 20 },
+    { value: 25 },
+    { value: 30 }
+  ];
+  const [bellStartValues, SetBellStartValues] = useState({
+    seconds: 3,
+  });
   const [meditationStartValues, SetMeditationStartValues] = useState({
     minutes: 15,
   });
@@ -50,17 +39,43 @@ const IndexPage = () => {
   const countdown = true;
   const precision = 'seconds';
   const updateWhenTargetAchieved = true;
+  const [bellTimer, isBellTargetAchieved] = useTimer({ updateWhenTargetAchieved });
   const [meditationTimer, isMeditationTargetAchieved] = useTimer({ updateWhenTargetAchieved });
   const [waitTimer, isWaitTargetAchieved] = useTimer({ updateWhenTargetAchieved });
 
+  const playBell = () => {
+    const audio = new Audio(bell);
+    audio.play();
+  };
+
+  const playBells = () => {
+    playBell();
+
+    bellTimer.addEventListener('targetAchieved', function (e) {
+      playBell();
+    });
+
+    bellTimer.start({
+      startValues: bellStartValues,
+      target,
+      countdown,
+      precision
+    });
+  };
+
   const startTimer = () => {
     waitTimer.addEventListener('targetAchieved', function (e) {
+      playBells();
       meditationTimer.start({
         startValues: meditationStartValues,
         target,
         countdown,
         precision
       });
+    });
+
+    meditationTimer.addEventListener('targetAchieved', function (e) {
+      playBells();
     });
 
     waitTimer.start({
