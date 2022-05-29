@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import useTimer from 'easytimer-react-hook';
 import '../css/style.css';
-import bell from '../sounds/bell-hard.m4a'; // Tell webpack this JS file uses this image
+import bell from '../sounds/bell-hard.m4a';
 
 const IndexPage = () => {
   const secondOptions = [
