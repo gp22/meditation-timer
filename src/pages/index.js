@@ -24,7 +24,7 @@ const IndexPage = () => {
   const [bellStartValues, SetBellStartValues] = useState({
     seconds: 3,
   });
-  let numBells = 3;
+  const numBells = 3;
   const [meditationStartValues, SetMeditationStartValues] = useState({
     minutes: 15,
   });
@@ -47,13 +47,13 @@ const IndexPage = () => {
     audio.play();
   };
 
-  const playBells = () => {
+  const playBells = (numBells) => {
     playBell();
+    numBells -= 1;
 
     bellTimer.addEventListener('targetAchieved', function (e) {
-      numBells -= 1;
-
       if (numBells) {
+        numBells -= 1;
         playBell();
         bellTimer.start({
           startValues: bellStartValues,
@@ -61,6 +61,8 @@ const IndexPage = () => {
           countdown,
           precision,
         });
+      } else {
+        bellTimer.removeAllEventListeners();
       }
     });
 
@@ -74,7 +76,8 @@ const IndexPage = () => {
 
   const startTimer = () => {
     waitTimer.addEventListener('targetAchieved', function (e) {
-      playBells();
+      playBells(numBells);
+
       meditationTimer.start({
         startValues: meditationStartValues,
         target,
@@ -84,7 +87,7 @@ const IndexPage = () => {
     });
 
     meditationTimer.addEventListener('targetAchieved', function (e) {
-      playBells();
+      playBells(numBells);
     });
 
     waitTimer.start({
