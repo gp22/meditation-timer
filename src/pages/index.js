@@ -39,32 +39,37 @@ const playBells = () => {
 const IndexPage = () => {
   const [meditationStartValues, SetMeditationStartValues] = useState({
     minutes: 15,
-    seconds: 0,
   });
   const [waitStartValues, SetWaitStartValues] = useState({
-    minutes: 0,
     seconds: 60,
   });
-  const [target, setTarget] = useState({
+  const target = {
     minutes: 0,
     seconds: 0,
-  });
+  };
   const countdown = true;
   const precision = 'seconds';
   const updateWhenTargetAchieved = true;
   const [meditationTimer, isMeditationTargetAchieved] = useTimer({ updateWhenTargetAchieved });
   const [waitTimer, isWaitTargetAchieved] = useTimer({ updateWhenTargetAchieved });
 
-  waitTimer.addEventListener('targetAchieved', function (e) {
-    console.log(meditationStartValues);
+  const startTimer = () => {
+    waitTimer.addEventListener('targetAchieved', function (e) {
+      meditationTimer.start({
+        startValues: meditationStartValues,
+        target,
+        countdown,
+        precision
+      });
+    });
 
-    meditationTimer.start({
-      startValues: meditationStartValues,
+    waitTimer.start({
+      startValues: waitStartValues,
       target,
       countdown,
       precision
     });
-  });
+  };
 
   return (
     <div>
@@ -77,7 +82,7 @@ const IndexPage = () => {
             {secondOptions && secondOptions.length && (
               <div>
                 <select id={'count-in'}
-                        onChange={(e) => SetWaitStartValues({ minutes: 0, seconds: Number(e.target.value) })}
+                        onChange={(e) => SetWaitStartValues({ seconds: Number(e.target.value) })}
                         disabled={meditationTimer.isRunning() || waitTimer.isRunning()}
                         value={waitStartValues.seconds}>
                   {secondOptions.map((option, index) => {
@@ -93,7 +98,7 @@ const IndexPage = () => {
             {minuteOptions && minuteOptions.length && (
               <div>
                 <select id={'meditation-time'}
-                        onChange={(e) => SetMeditationStartValues({ minutes: Number(e.target.value), seconds: 0 })}
+                        onChange={(e) => SetMeditationStartValues({ minutes: Number(e.target.value) })}
                         disabled={meditationTimer.isRunning() || waitTimer.isRunning()}
                         value={meditationStartValues.minutes}>
                   {minuteOptions.map((option, index) => {
@@ -106,14 +111,7 @@ const IndexPage = () => {
 
           <div>
             <button
-              onClick={() =>
-                waitTimer.start({
-                  startValues: waitStartValues,
-                  target,
-                  countdown,
-                  precision
-                })
-              }
+              onClick={startTimer}
               disabled={meditationTimer.isRunning() || waitTimer.isRunning()}
             >Meditate
             </button>
