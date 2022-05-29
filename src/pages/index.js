@@ -1,5 +1,3 @@
-//https://stackoverflow.com/questions/40885923/countdown-timer-in-react
-
 import React, { useState } from 'react';
 import useTimer from 'easytimer-react-hook';
 import '../css/style.css';
