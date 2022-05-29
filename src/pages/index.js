@@ -24,6 +24,7 @@ const IndexPage = () => {
   const [bellStartValues, SetBellStartValues] = useState({
     seconds: 3,
   });
+  let numBells = 3;
   const [meditationStartValues, SetMeditationStartValues] = useState({
     minutes: 15,
   });
@@ -50,7 +51,17 @@ const IndexPage = () => {
     playBell();
 
     bellTimer.addEventListener('targetAchieved', function (e) {
-      playBell();
+      numBells -= 1;
+
+      if (numBells) {
+        playBell();
+        bellTimer.start({
+          startValues: bellStartValues,
+          target,
+          countdown,
+          precision,
+        });
+      }
     });
 
     bellTimer.start({
