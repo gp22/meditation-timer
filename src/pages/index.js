@@ -22,7 +22,7 @@ const IndexPage = () => {
     { value: 30 }
   ];
   const [bellStartValues, SetBellStartValues] = useState({
-    seconds: 3,
+    seconds: 4,
   });
   const numBells = 3;
   const [meditationStartValues, SetMeditationStartValues] = useState({
@@ -48,9 +48,6 @@ const IndexPage = () => {
   };
 
   const playBells = (numBells) => {
-    playBell();
-    numBells -= 1;
-
     bellTimer.addEventListener('targetAchieved', function (e) {
       if (numBells) {
         numBells -= 1;
@@ -63,14 +60,16 @@ const IndexPage = () => {
         });
       } else {
         bellTimer.removeAllEventListeners();
+        bellTimer.reset();
+        bellTimer.stop();
       }
     });
 
     bellTimer.start({
-      startValues: bellStartValues,
+      startValues: { secondTenths: 1 },
       target,
       countdown,
-      precision
+      precision: 'secondTenths'
     });
   };
 
@@ -99,7 +98,7 @@ const IndexPage = () => {
   };
 
   return (
-    <div>
+    <>
       <audio preload="auto" src={bell}/>
 
       <main className="cover">
@@ -153,7 +152,7 @@ const IndexPage = () => {
           }</p>
         </div>
       </main>
-    </div>
+    </>
   );
 };
 
