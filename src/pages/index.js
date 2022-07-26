@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import useTimer from 'easytimer-react-hook';
 import '../css/style.css';
 import bell from '../sounds/bell-hard.m4a';
+import threeBells from '../sounds/bell-hard-3.m4a';
 
 const IndexPage = () => {
   const secondOptions = [
@@ -42,40 +43,14 @@ const IndexPage = () => {
   const [meditationTimer, isMeditationTargetAchieved] = useTimer({ updateWhenTargetAchieved });
   const [waitTimer, isWaitTargetAchieved] = useTimer({ updateWhenTargetAchieved });
 
-  const playBell = () => {
-    const audio = new Audio(bell);
+  const playBell = (numBells) => {
+    const audio = new Audio(threeBells);
     audio.play();
-  };
-
-  const playBells = (numBells) => {
-    bellTimer.addEventListener('targetAchieved', function (e) {
-      if (numBells) {
-        numBells -= 1;
-        playBell();
-        bellTimer.start({
-          startValues: bellStartValues,
-          target,
-          countdown,
-          precision,
-        });
-      } else {
-        bellTimer.removeAllEventListeners();
-        bellTimer.reset();
-        bellTimer.stop();
-      }
-    });
-
-    bellTimer.start({
-      startValues: { secondTenths: 1 },
-      target,
-      countdown,
-      precision: 'secondTenths'
-    });
   };
 
   const startTimer = () => {
     waitTimer.addEventListener('targetAchieved', function (e) {
-      playBells(numBells);
+      playBell(numBells);
 
       meditationTimer.start({
         startValues: meditationStartValues,
@@ -86,7 +61,7 @@ const IndexPage = () => {
     });
 
     meditationTimer.addEventListener('targetAchieved', function (e) {
-      playBells(numBells);
+      playBell(numBells);
     });
 
     waitTimer.start({
@@ -99,7 +74,7 @@ const IndexPage = () => {
 
   return (
     <>
-      <audio preload="auto" src={bell}/>
+      <audio preload="auto" src={threeBells}/>
 
       <main className="cover">
         <div className="cluster">
